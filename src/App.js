@@ -1,23 +1,56 @@
 import logo from './logo.svg';
 import './App.css';
+import Pusher from 'pusher-js';
+import { useState } from 'react';
+
 
 function App() {
+  const [user1, setUser1] = useState('');
+  const [user2, setUser2] = useState('');
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    console.log(user1);
+    console.log(user2);
+
+    
+    
+
+    Pusher.logToConsole = false;
+
+    var pusher = new Pusher('014b8eb7bfaf79153ac0', {
+      cluster: 'ap1'
+    });
+    var channel = pusher.subscribe(`${user1}${user2}`);
+    
+    channel.bind('my-event', function (data) {
+      alert(JSON.stringify(data));
+    });
+
+    // await fetch('http://127.0.0.1:8000/api/sendMessage',{
+    //   method: 'POST',
+    //   headers:{'Content-Type': 'application/json'},
+    //   body: JSON.stringify({        
+    //     message,
+    //     channel
+    //   })
+    // })
+
+    // setMessage('');
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={e => handleSubmit(e)}>
+        User:<input value={user1} onChange={e => setUser1(e.target.value)} />
+        To <input value={user2} onChange={e => setUser2(e.target.value)} />
+        <div style={{ height: '500px' }}>
+
+
+        </div>
+        Message<input />
+        <input type='submit' />
+      </form>
     </div>
   );
 }
